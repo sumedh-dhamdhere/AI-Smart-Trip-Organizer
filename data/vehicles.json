@@ -1,0 +1,120 @@
+{
+    "Car": {
+        "Mahindra": {
+            "Scorpio N Diesel AT": {
+                "mileage": 14.6,
+                "fuel": "Diesel",
+                "tank": 57
+            },
+            "Scorpio N Diesel MT": {
+                "mileage": 15.9,
+                "fuel": "Diesel",
+                "tank": 57
+            },
+            "Scorpio N Petrol AT": {
+                "mileage": 11.2,
+                "fuel": "Petrol",
+                "tank": 57
+            },
+            "Scorpio N Petrol MT": {
+                "mileage": 12.1,
+                "fuel": "Petrol",
+                "tank": 57
+            }
+        },
+
+        "Maruti Suzuki": {
+            "Swift Petrol MT": {
+                "mileage": 24.8,
+                "fuel": "Petrol",
+                "tank": 37
+            },
+            "Swift Petrol AT": {
+                "mileage": 25.8,
+                "fuel": "Petrol",
+                "tank": 37
+            },
+            "Swift CNG": {
+                "mileage": 32.9,
+                "fuel": "CNG",
+                "tank": 37
+            },
+
+            "Baleno Petrol MT": {
+                "mileage": 22.3,
+                "fuel": "Petrol",
+                "tank": 37
+            },
+            "Baleno Petrol AT": {
+                "mileage": 22.9,
+                "fuel": "Petrol",
+                "tank": 37
+            },
+            "Baleno CNG MT": {
+                "mileage": 30.6,
+                "fuel": "CNG",
+                "tank": 37
+            }
+        }
+    },
+
+    "Bike": {
+
+        "Royal Enfield": {
+
+            "Classic 350": {
+
+                "mileage": 41.5,
+
+                "fuel": "Petrol",
+
+                "tank": 13
+            },
+
+            "Himalayan 450": {
+
+                "mileage": 29.5,
+
+                "fuel": "Petrol",
+
+                "tank": 17
+            },
+            
+            "Continental GT 650": {
+
+                "mileage": 25,
+
+                "fuel": "Petrol",
+
+                "tank": 13.7
+            }
+
+        },
+
+        "Bajaj": {
+
+            "Pulsar NS200": {
+
+                "mileage": 38,
+
+                "fuel": "Petrol",
+
+                "tank": 12
+
+            },
+
+            "Pulsar NS400z": {
+
+                "mileage": 32,
+
+                "fuel": "Petrol",
+
+                "tank": 12
+
+            }
+
+        }
+
+    }
+
+}

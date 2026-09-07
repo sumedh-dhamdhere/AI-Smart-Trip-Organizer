@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Command Center</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-mark">✦</div>
+            <div>
+                <strong>TripOS</strong>
+                <span>AI journey control</span>
+            </div>
+        </div>
+
+        <div class="trip-mini">
+            <span class="eyebrow">ACTIVE TRIP</span>
+            <strong>{{ start }} → {{ destination }}</strong>
+            <span>{{ date }} · {{ time }}</span>
+        </div>
+
+        <nav class="dashboard-nav" aria-label="Trip dashboards">
+            <button class="nav-item active" data-dashboard="overview"><span>01</span> Overview</button>
+            <button class="nav-item" data-dashboard="route"><span>02</span> Route & Map</button>
+            <button class="nav-item" data-dashboard="budget"><span>03</span> Cost Control</button>
+            <button class="nav-item" data-dashboard="nearby"><span>04</span> Nearby Services</button>
+            <button class="nav-item" data-dashboard="weather"><span>05</span> Weather</button>
+        </nav>
+
+        <a class="new-trip" href="{{ url_for('home') }}">＋ Plan another trip</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <span class="eyebrow">SMART TRIP WORKSPACE</span>
+                <h1>{{ destination }}</h1>
+                <p>One trip, five focused dashboards. Switch views without losing your route data.</p>
+            </div>
+            <div class="status-pill"><i></i> Analysis ready</div>
+        </header>
+
+        <!-- 01 OVERVIEW -->
+        <section class="dashboard-view active" id="dashboard-overview">
+            <div class="hero-grid">
+                <div class="hero-card">
+                    <span class="eyebrow">JOURNEY</span>
+                    <div class="route-line">
+                        <div><b>A</b><span>{{ start }}</span></div>
+                        <div class="route-arrow">→</div>
+                        <div><b>B</b><span>{{ destination }}</span></div>
+                    </div>
+                    <div class="hero-meta">
+                        <span>{{ transport }}</span>
+                        {% if brand %}<span>{{ brand }} · {{ model }}</span>{% endif %}
+                        <span>{{ date }} · {{ time }}</span>
+                    </div>
+                </div>
+                <div class="weather-preview">
+                    <span class="eyebrow">DESTINATION WEATHER</span>
+                    {% if weather %}
+                    <strong>{{ weather.temperature }}°</strong>
+                    <span>{{ weather.description }} · {{ weather.humidity }}% humidity</span>
+                    {% else %}
+                    <strong>—</strong>
+                    <span>Weather information unavailable</span>
+                    {% endif %}
+                    <button class="text-link" data-dashboard-link="weather">Open weather dashboard →</button>
+                </div>
+            </div>
+
+            <div class="section-heading">
+                <div><span class="eyebrow">LIVE TRIP METRICS</span><h2>At-a-glance dashboard</h2></div>
+                <span class="live-dot">● Route calculations update automatically</span>
+            </div>
+
+            <div class="metric-grid">
+                <article class="metric-card accent-teal"><span>Distance</span><strong id="distance">--</strong><small>Total route</small></article>
+                <article class="metric-card"><span>Drive time</span><strong id="duration">--</strong><small>Estimated duration</small></article>
+                <article class="metric-card"><span>Fuel needed</span><strong id="fuelRequired">--</strong><small>{{ fuel }} · {{ mileage }} km/l</small></article>
+                <article class="metric-card accent-gold"><span>Fuel cost</span><strong id="fuelCost">--</strong><small>Based on current input</small></article>
+                <article class="metric-card"><span>Tolls</span><strong id="tollCost">--</strong><small>Estimated route toll</small></article>
+                <article class="metric-card accent-teal"><span>Budget left</span><strong id="remainingBudget">--</strong><small>From ₹{{ budget }} trip budget</small></article>
+            </div>
+
+            <div class="two-column">
+                <article class="panel-card">
+                    <div class="card-heading"><div><span class="eyebrow">TRIP PROFILE</span><h3>Planning details</h3></div><span class="card-icon">⌁</span></div>
+                    <div class="detail-list">
+                        <div><span>Start</span><strong>{{ start }}</strong></div>
+                        <div><span>Destination</span><strong>{{ destination }}</strong></div>
+                        <div><span>Transport</span><strong>{{ transport }}</strong></div>
+                        <div><span>Vehicle</span><strong>{{ model or 'Public transport' }}</strong></div>
+                        <div><span>Budget</span><strong>₹{{ budget }}</strong></div>
+                    </div>
+                </article>
+                <article class="panel-card insight-card">
+                    <span class="eyebrow">SMART SUMMARY</span>
+                    <h3>Your trip control center is ready.</h3>
+                    <p>Use Route & Map for navigation, Cost Control for spending, Nearby Services for stops, and Weather for destination conditions.</p>
+                    <button class="primary-action" data-dashboard-link="route">Open route dashboard →</button>
+                </article>
+            </div>
+        </section>
+
+        <!-- 02 ROUTE -->
+        <section class="dashboard-view" id="dashboard-route">
+            <div class="page-heading">
+                <div><span class="eyebrow">DASHBOARD 02</span><h2>Route & Map</h2><p>Live navigation, route instructions and service markers.</p></div>
+                <span class="dashboard-badge">MAP MODE</span>
+            </div>
+            <div class="route-layout">
+                <article class="map-card"><div id="map"></div></article>
+                <article class="route-summary panel-card">
+                    <span class="eyebrow">ROUTE SNAPSHOT</span>
+                    <div class="route-stat"><span>Distance</span><strong id="route-distance">--</strong></div>
+                    <div class="route-stat"><span>Duration</span><strong id="route-duration">--</strong></div>
+                    <div class="route-stat"><span>Transport</span><strong>{{ transport }}</strong></div>
+                    <div class="route-endpoints"><div><b>A</b>{{ start }}</div><div><b>B</b>{{ destination }}</div></div>
+                    <button class="secondary-action" data-dashboard-link="nearby">Explore services along route →</button>
+                </article>
+            </div>
+        </section>
+
+        <!-- 03 BUDGET -->
+        <section class="dashboard-view" id="dashboard-budget">
+            <div class="page-heading">
+                <div><span class="eyebrow">DASHBOARD 03</span><h2>Cost Control</h2><p>Track the estimated spend against your trip budget.</p></div>
+                <span class="dashboard-badge">₹ BUDGET</span>
+            </div>
+            <div class="budget-hero panel-card">
+                <div><div><span class="eyebrow">PLANNED BUDGET</span><strong class="budget-total">₹{{ budget }}</strong></div><div class="budget-remaining"><span>Remaining</span><strong id="budget-remaining-large">--</strong></div></div>
+                <div class="budget-track"><span id="budget-fill"></span></div>
+                <div class="budget-legend"><span><i class="dot fuel-dot"></i>Fuel <b id="budget-fuel">--</b></span><span><i class="dot toll-dot"></i>Tolls <b id="budget-toll">--</b></span><span><i class="dot remaining-dot"></i>Remaining <b id="budget-remain">--</b></span></div>
+            </div>
+            <div class="cost-grid">
+                <article class="cost-card"><span>⛽ Fuel</span><strong id="budget-fuel-card">--</strong><small>Calculated from route distance and mileage</small></article>
+                <article class="cost-card"><span>🛣 Toll</span><strong id="budget-toll-card">--</strong><small>Current route estimate</small></article>
+                <article class="cost-card"><span>◎ Total committed</span><strong id="budget-total-card">--</strong><small>Fuel + tolls</small></article>
+            </div>
+        </section>
+
+        <!-- 04 NEARBY -->
+        <section class="dashboard-view" id="dashboard-nearby">
+            <div class="page-heading">
+                <div><span class="eyebrow">DASHBOARD 04</span><h2>Nearby Services</h2><p>Useful stops discovered along your route.</p></div>
+                <span class="dashboard-badge">ROUTE SERVICES</span>
+            </div>
+            <div class="service-grid">
+                <div class="service-column">
+                    <button class="accordion"><span>⛽</span> Petrol Pumps <b>＋</b></button><div class="panel"><div id="petrolStations">Loading petrol pumps...</div></div>
+                    <button class="accordion"><span>⚡</span> EV Charging Stations <b>＋</b></button><div class="panel"><div id="evStations">Loading EV charging stations...</div></div>
+                    <button class="accordion"><span>🍴</span> Restaurants <b>＋</b></button><div class="panel"><div id="restaurants">Loading restaurants...</div></div>
+                </div>
+                <div class="service-column">
+                    <button class="accordion"><span>🏨</span> Hotels <b>＋</b></button><div class="panel"><div id="hotels">Loading hotels...</div></div>
+                    <button class="accordion"><span>🏥</span> Hospitals <b>＋</b></button><div class="panel"><div id="hospitals">Loading hospitals...</div></div>
+                    <button class="accordion"><span>🅿</span> Parking <b>＋</b></button><div class="panel"><div id="parking">Loading parking locations...</div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 05 WEATHER -->
+        <section class="dashboard-view" id="dashboard-weather">
+            <div class="page-heading">
+                <div><span class="eyebrow">DASHBOARD 05</span><h2>Destination Weather</h2><p>Current conditions returned for your destination.</p></div>
+                <span class="dashboard-badge">LIVE DATA</span>
+            </div>
+            {% if weather %}
+            <div class="weather-grid">
+                <article class="weather-main panel-card"><span class="eyebrow">{{ weather.city }}</span><strong>{{ weather.temperature }}°C</strong><h3>{{ weather.description }}</h3><p>Conditions at your destination.</p></article>
+                <div class="weather-stats"><article class="weather-stat"><span>Humidity</span><strong>{{ weather.humidity }}%</strong></article><article class="weather-stat"><span>Wind speed</span><strong>{{ weather.wind }} m/s</strong></article><article class="weather-stat"><span>Trip date</span><strong>{{ date }}</strong></article><article class="weather-stat"><span>Departure</span><strong>{{ time }}</strong></article></div>
+            </div>
+            {% else %}
+            <div class="empty-state panel-card"><strong>Weather unavailable</strong><p>We couldn't retrieve destination weather right now.</p></div>
+            {% endif %}
+        </section>
+    </main>
+</div>
+
+<script>
+const startCity = {{ start | tojson }};
+const destinationCity = {{ destination | tojson }};
+const budget = Number({{ budget | tojson }});
+const mileage = Number({{ mileage | tojson }});
+const fuelType = {{ fuel | tojson }};
+const fuelPrice = Number({{ fuel_price | tojson }});
+</script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+<script src="{{ url_for('static', filename='js/result.js') }}"></script>
+<script>
+(function(){
+    const buttons = document.querySelectorAll(".nav-item");
+    const views = document.querySelectorAll(".dashboard-view");
+    function activate(name){
+        buttons.forEach(b => b.classList.toggle("active", b.dataset.dashboard === name));
+        views.forEach(v => v.classList.toggle("active", v.id === "dashboard-" + name));
+        if(name === "route" && window.map) setTimeout(() => window.map.invalidateSize(), 80);
+    }
+    buttons.forEach(b => b.addEventListener("click", () => activate(b.dataset.dashboard)));
+    document.querySelectorAll("[data-dashboard-link]").forEach(b => b.addEventListener("click", () => activate(b.dataset.dashboardLink)));
+
+    const mirror = () => {
+        const distance = document.getElementById("distance")?.textContent || "--";
+        const duration = document.getElementById("duration")?.textContent || "--";
+        const fuel = document.getElementById("fuelCost")?.textContent || "--";
+        const toll = document.getElementById("tollCost")?.textContent || "--";
+        const remain = document.getElementById("remainingBudget")?.textContent || "--";
+        document.getElementById("route-distance").textContent = distance;
+        document.getElementById("route-duration").textContent = duration;
+        document.getElementById("budget-fuel").textContent = fuel;
+        document.getElementById("budget-fuel-card").textContent = fuel;
+        document.getElementById("budget-toll").textContent = toll;
+        document.getElementById("budget-toll-card").textContent = toll;
+        document.getElementById("budget-remain").textContent = remain;
+        document.getElementById("budget-remaining-large").textContent = remain;
+        const f = parseFloat(fuel.replace(/[^\d.-]/g,"")) || 0;
+        const t = parseFloat(toll.replace(/[^\d.-]/g,"")) || 0;
+        const r = parseFloat(remain.replace(/[^\d.-]/g,"")) || 0;
+        document.getElementById("budget-total-card").textContent = "₹" + Math.round(f+t);
+        const used = Math.max(0, Math.min(100, ((f+t) / budget) * 100));
+        document.getElementById("budget-fill").style.width = used + "%";
+    };
+    const observer = new MutationObserver(mirror);
+    ["distance","duration","fuelCost","tollCost","remainingBudget"].forEach(id => {
+        const el=document.getElementById(id); if(el) observer.observe(el,{childList:true,subtree:true,characterData:true});
+    });
+    mirror();
+    window.activateTripDashboard = activate;
+})();
+</script>
+</body>
+</html>

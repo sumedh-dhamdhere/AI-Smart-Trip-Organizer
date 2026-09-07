@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>AI Planning Trip</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body{
+
+            background: #0A1120;
+            color: #F2EDE1;
+
+            height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .container{
+
+            width: 600px;
+            text-align: center;
+        }
+
+        h1{
+
+            font-family: 'Fraunces', serif;
+            font-weight: 500;
+            font-size: 40px;
+            margin-bottom: 15px;
+
+        }
+
+        p{
+
+           color:#CBC5B4;
+           margin-bottom: 40px;
+
+        }
+
+        .task{
+
+            text-align: left;
+            font-size: 15px;
+            font-family: 'Space Mono', monospace;
+            color: #8AD4CA;
+            margin: 16px 0;
+
+            opacity: 0;
+
+            animation: fade .5s forwards;
+
+        }
+
+        .task:nth-child(3){animation-delay: 0.5s;}
+        .task:nth-child(4){animation-delay: 1s;}
+        .task:nth-child(5){animation-delay: 1.5s;}
+        .task:nth-child(6){animation-delay: 2s;}
+        .task:nth-child(7){animation-delay: 2.5s;}
+        .task:nth-child(8){animation-delay: 3s;}
+
+        @keyframes fade{
+
+            from{
+
+                opacity: 0;
+                transform: translateX(-30px);
+
+            }
+
+            to{
+
+                opacity: 1;
+                transform: translateX(0);
+
+            }
+
+        }
+
+        .progress{
+
+            margin-top: 45px;
+
+            width: 100%;
+            height: 6px;
+
+            background: #1E2C4D;
+
+            border-radius: 30px;
+
+            overflow: hidden;
+
+        }
+
+        .fill{
+
+            width: 0%;
+            height: 100%;
+
+            background: #E8B94A;
+
+            animation: load 4s linear forwards;
+
+        }
+
+        @keyframes load{
+
+            from{width: 0%;}
+            to{width: 100%;}
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🧠 AI Smart Trip Organizer</h1>
+
+        <p>Preparing your smart journey...</p>
+
+        <div class="task">✅ Finding Best Route...</div>
+        <div class="task">✅ Checking Weather...</div>
+        <div class="task">✅ Calculating Fuel Cost...</div>
+        <div class="task">✅ Finding Restaurants...</div>
+        <div class="task">✅ Checking Parking...</div>
+        <div class="task">✅ Preparing Smart Trip...</div>
+        <div class="progress">
+            <div class="fill"></div>
+        </div>
+    </div>
+
+    <script>
+
+        setTimeout(function(){
+
+            window.location.href="/result";
+
+        },4000);
+
+    </script>
+
+</body>
+</html>

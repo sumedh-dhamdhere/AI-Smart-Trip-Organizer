@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Trip Organizer</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="welcome-screen">
+
+        <h1>AI Smart Trip Organizer</h1>
+
+        <p>Every Journey Begins With A Dream.</p>
+
+        <small>Click Anywhere to Begin</small>
+
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+
+        <!-- Top Tabs -->
+        <div class="top-tabs">
+
+            <button>Frequently Asked Trips</button>
+
+            <button>History</button>
+
+            <button>Presets</button>
+
+        </div>
+
+        <!-- Trip Card -->
+        <div class="trip-card">
+
+            <h2>Plan A New Trip</h2>
+
+            <!-- Progress Bar -->
+            <div class="progress">
+
+                <div id="progress-fill" class="progress-fill"></div>
+
+            </div>
+
+            <p class="step">Step 1 of 5</p>
+
+            <form id="tripForm" action="/plan-trip" method="POST">
+
+                <!-- STEP 1 -->
+                <div class="step-page" id="step1">
+
+                    <label for="start">Start Location</label>
+
+                    <input
+                        type="text"
+                        id="start"
+                        name="start"
+                        placeholder="Enter Starting Location"
+                        required>
+
+                    <label for="destination">Destination</label>
+
+                    <input
+                        type="text"
+                        id="destination"
+                        name="destination"
+                        placeholder="Enter Destination"
+                        required>
+
+                    <button
+                        type="button"
+                        id="next1"
+                        class="next-btn">
+
+                        Next →
+
+                    </button>
+
+                </div>
+
+                <!-- STEP 2 -->
+                <div class="step-page" id="step2" style="display:none;">
+
+                    <h3>Choose Your Transport</h3>
+
+                    <div class="transport-options">
+
+                        <div class="transport-card" data-value="Car">
+                            <div class="icon">🚗</div>
+                            <h4>Car</h4>
+                        </div>
+
+                        <div class="transport-card" data-value="Bike">
+                            <div class="icon">🏍️</div>
+                            <h4>Bike</h4>
+                        </div>
+
+                        <div class="transport-card" data-value="Public Transport">
+                            <div class="icon">🚌</div>
+                            <h4>Public Transport</h4>
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden input -->
+                    <input
+                        type="hidden"
+                        id="transport"
+                        name="transport">
+
+                    <div class="button-group">
+
+                        <button
+                            type="button"
+                            id="back1"
+                            class="next-btn">
+                            ← Back
+                        </button>
+                            
+                        <button
+                            type="button"
+                            id="next2"
+                            class="next-btn">
+                            Next →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 3 -->
+
+                <div class="step-page" id="step3" style="display:none;">
+
+                    <h3 id="step3-title">Choose Option</h3>
+                
+                    <!-- Car Options -->
+
+                    <div id="car-options" style="display:none;">
+
+                        <label for="car-brand">Manufacturer</label>
+
+                        <select id="car-brand" name="car_brand">
+                            <option value="">Select Manufacturer</option>
+                        </select>
+
+                        <br><br>
+
+                        <label for="car-model">Model</label>
+
+                        <select id="car-model" name="car_model">
+                            <option value="">Select Model</option>
+                        </select>
+
+                        <input type="hidden" id="fuel" name="fuel">
+                        <input type="hidden" id="mileage" name="mileage">
+                        <input type="hidden" id="tank" name="tank">
+
+                    </div>
+
+
+                    <!-- Bike Options -->
+
+                     <div id="bike-options" style="display:none;">
+
+                        <label for="bike-brand">Manufacturer</label>
+
+                        <select id="bike-brand" name="bike_brand">
+                            <option value="">Select Manufacturer</option>
+                        </select>
+
+                        <br><br>
+
+                        <label for="bike-model">Model</label>
+
+                        <select id="bike-model" name="bike_model">
+                            <option value="">Select Model</option>
+                        </select>
+                        
+                    </div>
+
+
+                    <!-- Public Transport -->
+
+                    <div id="public-options" style="display:none;">
+
+                        <label for="public-transport">Transport Type</label>
+
+                        <select id="public-transport" name="public_transport">
+                            <option value="">Select Transport</option>
+                            <option>Bus</option>
+                            <option>Train</option>
+                            <option>Metro</option>
+                            <option>Cab</option>
+                            <option>Flight</option>
+                        </select>
+                    </div>
+
+                    <div class="button-group">
+
+                        <button
+                            type="button"
+                            id="back2"
+                            class="next-btn">
+                            ← Back
+                        </button>
+
+                        <button
+                            type="button"
+                            id="next3"
+                            class="next-btn">
+                            Next →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 4 -->
+
+                <div class="step-page" id="step4" style="display: none;">
+                    <h3>Travel Date & Departure Time</h3>
+                    <label for="date">Travel Date</label>
+                    <input
+                        type="date"
+                        id="date"
+                        name="date"
+                        required>
+
+                    <label for="time">Departure Time</label>
+                    <input
+                        type="time"
+                        id="time"
+                        name="time"
+                        required>
+                    
+                    <div class="button-group">
+
+                        <button
+                            type="button"
+                            id="back3"
+                            class="next-btn">
+                            ← Back
+                        </button>
+                        <button
+                            type="button"
+                            id="next4"
+                            class="next-btn">
+                            Next →
+                        </button>
+                    </div> 
+                        
+                </div>
+                
+                <!-- STEP 5 -->
+
+                <div class="step-page" id="step5" style="display:none;">
+
+                    <label for="budget">Trip Budget (₹)</label>
+                    <input
+                        type="number"
+                        id="budget"
+                        name="budget"
+                        placeholder="Enter Your Budget"
+                        min="0"
+                        required>
+                    <div class="button-group">   
+                        <button
+                            type="button"
+                            id="back4"
+                            class="next-btn">
+                            ← Back
+                        </button>
+                        <button
+                            type="submit"
+                            id="finish"
+                            class="next-btn">
+                            Finish ✓
+                        </button>
+                    </div> 
+                        
+                </div>
+
+            </form>
+
+        </div> 
+        
+        <!-- End Trip Card -->
+
+    </div> 
+    
+    <!-- End Dashboard -->
+
+    <script>
+    const vehicles = {{ vehicles | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>
